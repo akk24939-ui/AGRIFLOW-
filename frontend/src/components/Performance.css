@@ -1,0 +1,74 @@
+.performance-section {
+  background-color: var(--light-green);
+  position: relative;
+  overflow: hidden;
+}
+
+.performance-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -10%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(46, 204, 113, 0.1) 0%, rgba(255,255,255,0) 70%);
+  border-radius: 50%;
+}
+
+.performance-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+}
+
+.perf-card {
+  flex: 1;
+  min-width: 200px;
+  max-width: 250px;
+  padding: 30px 20px;
+  text-align: center;
+  background: white;
+  border: 1px solid rgba(46, 204, 113, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.perf-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(46, 204, 113, 0.15);
+}
+
+.perf-icon {
+  width: 70px;
+  height: 70px;
+  margin: 0 auto 20px;
+  background: var(--light-green);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-green);
+}
+
+.perf-title {
+  font-size: 1.5rem;
+  color: var(--dark-green);
+  margin-bottom: 10px;
+  font-weight: 800;
+}
+
+.perf-desc {
+  font-size: 1rem;
+  color: var(--text-main);
+  opacity: 0.8;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .perf-card {
+    min-width: 150px;
+  }
+  .perf-title {
+    font-size: 1.2rem;
+  }
+}

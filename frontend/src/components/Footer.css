@@ -1,0 +1,188 @@
+.footer-section {
+  background-color: var(--dark-green);
+  color: white;
+  position: relative;
+  margin-top: 100px;
+}
+
+.visit-cta-container {
+  position: absolute;
+  top: -100px;
+  left: 0;
+  width: 100%;
+}
+
+.visit-card {
+  display: flex;
+  background: white;
+  color: var(--text-main);
+  padding: 40px;
+  gap: 40px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+}
+
+.visit-content {
+  flex: 1;
+}
+
+.visit-title {
+  font-size: 2rem;
+  color: var(--dark-green);
+  margin-bottom: 10px;
+}
+
+.visit-desc {
+  font-size: 1.1rem;
+  color: #666;
+  margin-bottom: 25px;
+}
+
+.visit-benefits {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.visit-benefits li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+}
+
+.benefit-icon {
+  color: var(--primary-green);
+}
+
+.visit-illustration {
+  flex: 1;
+  position: relative;
+  background: var(--light-green);
+  border-radius: 15px;
+  min-height: 250px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.map-pin {
+  color: #e74c3c;
+  z-index: 2;
+  margin-bottom: 50px;
+}
+
+.road-line {
+  position: absolute;
+  bottom: 60px;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: #ccc;
+  background-image: linear-gradient(90deg, #fff 50%, transparent 50%);
+  background-size: 30px 4px;
+}
+
+.animated-car {
+  position: absolute;
+  bottom: 30px;
+  color: #34495e;
+  animation: drive 6s infinite linear;
+}
+
+.moving-car {
+  animation: slight-bounce 1s infinite alternate;
+}
+
+@keyframes drive {
+  0% { left: -60px; }
+  100% { left: 100%; }
+}
+
+@keyframes slight-bounce {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-2px); }
+}
+
+.footer-bottom {
+  padding-top: 250px;
+  padding-bottom: 30px;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 40px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding-bottom: 40px;
+  margin-bottom: 20px;
+}
+
+.brand-name {
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: var(--primary-green);
+  margin-bottom: 10px;
+}
+
+.footer-links h4, .footer-contact h4 {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  color: var(--primary-green);
+}
+
+.footer-links ul {
+  list-style: none;
+}
+
+.footer-links li {
+  margin-bottom: 10px;
+}
+
+.footer-links a {
+  color: #ccc;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.footer-links a:hover {
+  color: white;
+}
+
+.footer-contact p {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+  color: #ccc;
+}
+
+.footer-copyright {
+  text-align: center;
+  color: #aaa;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 992px) {
+  .visit-card {
+    flex-direction: column;
+  }
+  .footer-bottom {
+    padding-top: 550px;
+  }
+  .visit-benefits {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .footer-grid {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .footer-contact p {
+    justify-content: center;
+  }
+}
