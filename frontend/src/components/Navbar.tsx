@@ -24,7 +24,7 @@ const Navbar: React.FC = () => {
       <div className="container nav-container">
         {/* Logo */}
         <div className="logo-container" onClick={() => scrollTo('home')} style={{ cursor: 'pointer' }}>
-          <img src="/panimugil-logo.png" alt="Panimugil Farm Developers" className="nav-logo" />
+          <img src="/logo.png" alt="Panimugil Farm Developers" className="nav-logo" />
         </div>
 
         {/* Desktop + Mobile nav links */}

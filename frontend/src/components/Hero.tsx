@@ -41,7 +41,7 @@ const Hero: React.FC = () => {
           {/* Brand Logo */}
           <div className="hero-logo-wrap">
             <img
-              src="/panimugil-logo.png"
+              src="/logo.png"
               alt="Panimugil Farm Developers"
               className="hero-brand-logo"
             />

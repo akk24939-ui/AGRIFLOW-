@@ -80,7 +80,7 @@ export default function AdminLoginPage() {
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <img
-            src="/panimugil-logo.png"
+            src="/logo.png"
             alt="Panimugil Farm Developers"
             style={{ height: 90, width: 'auto', objectFit: 'contain', marginBottom: 12, filter: 'drop-shadow(0 4px 12px rgba(241,196,15,0.3))' }}
           />
