@@ -27,11 +27,13 @@ export default function CustomerApp() {
       return;
     }
     if (adminUser.role !== 'CUSTOMER') {
-      navigate('/admin/dashboard');
+      // Wrong role — redirect to login
+      navigate('/admin/login');
       return;
     }
     loadData();
   }, [adminUser]);
+
 
   const loadData = async () => {
     setLoading(true);

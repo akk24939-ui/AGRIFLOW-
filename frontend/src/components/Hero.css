@@ -24,14 +24,14 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, rgba(20, 82, 45, 0.8), rgba(46, 204, 113, 0.5));
+  background: linear-gradient(135deg, rgba(10, 40, 20, 0.82), rgba(30, 120, 60, 0.6));
   z-index: -1;
 }
 
 .water-ripple {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  background-image: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 60%);
+  background-image: radial-gradient(circle at center, rgba(255,255,255,0.08) 0%, transparent 60%);
   background-size: 200% 200%;
   animation: rippleEffect 8s infinite alternate ease-in-out;
   pointer-events: none;
@@ -39,9 +39,9 @@
 }
 
 @keyframes rippleEffect {
-  0% { background-position: 0% 50%; opacity: 0.3; transform: scale(1); }
-  50% { background-position: 100% 50%; opacity: 0.6; transform: scale(1.05); }
-  100% { background-position: 0% 50%; opacity: 0.3; transform: scale(1); }
+  0%   { background-position: 0% 50%;   opacity: 0.3; transform: scale(1); }
+  50%  { background-position: 100% 50%; opacity: 0.6; transform: scale(1.04); }
+  100% { background-position: 0% 50%;   opacity: 0.3; transform: scale(1); }
 }
 
 .hero-content {
@@ -50,83 +50,163 @@
   align-items: center;
   text-align: center;
   z-index: 1;
-  padding-top: 100px; /* Space for Navbar */
-  padding-bottom: 60px; /* Prevent overlap with scroll indicator */
+  padding-top: 90px;
+  padding-bottom: 80px;
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding-left: 20px;
+  padding-right: 20px;
+  box-sizing: border-box;
 }
 
+/* ── Tamil kural ──────────────────── */
 .kural-container {
-  padding: 25px 40px;
-  margin-bottom: 50px;
-  max-width: 800px;
+  padding: 22px 36px;
+  margin-bottom: 40px;
+  max-width: 780px;
+  width: 100%;
 }
 
 .kural {
-  font-size: 1.8rem;
+  font-size: 1.7rem;
   line-height: 1.6;
   font-weight: 700;
-  color: #f1c40f; /* Gold color for Tamil text */
-  margin-bottom: 15px;
+  color: #f1c40f;
+  margin-bottom: 12px;
   text-shadow: 0 2px 10px rgba(0,0,0,0.5);
 }
 
 .kural-meaning {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 300;
   font-style: italic;
   color: rgba(255, 255, 255, 0.9);
 }
 
+/* ── Hero brand logo ──────────────── */
+.hero-logo-wrap {
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+.hero-brand-logo {
+  height: 110px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 20px rgba(241,196,15,0.35));
+  animation: logoGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes logoGlow {
+  from { filter: drop-shadow(0 4px 16px rgba(241,196,15,0.3)); }
+  to   { filter: drop-shadow(0 6px 28px rgba(241,196,15,0.6)); }
+}
+
+/* ── Title ────────────────────────── */
 .main-title-container {
   max-width: 900px;
+  width: 100%;
 }
 
 .main-title {
-  font-size: 5.5rem;
-  font-weight: 800;
-  letter-spacing: 2px;
+  font-size: 5rem;
+  font-weight: 900;
+  letter-spacing: 4px;
   margin-bottom: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 15px;
-  background: linear-gradient(to right, #ffffff, #e9f7ef);
+  gap: 12px;
+  background: linear-gradient(to right, #ffffff, #d1fae5);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 10px 30px rgba(0,0,0,0.3);
-}
-
-.leaf-icon {
-  color: var(--primary-green);
-  -webkit-text-fill-color: var(--primary-green);
 }
 
 .sub-title {
-  font-size: 1.8rem;
+  font-size: 1.55rem;
   font-weight: 600;
-  margin-bottom: 20px;
-  color: var(--sky-blue);
-  letter-spacing: 1px;
-}
-
-.description {
-  font-size: 1.2rem;
-  font-weight: 400;
-  margin-bottom: 40px;
-  opacity: 0.9;
+  margin-bottom: 16px;
+  color: #7dd3fc;
   letter-spacing: 0.5px;
 }
 
+.description {
+  font-size: 1.05rem;
+  font-weight: 400;
+  margin-bottom: 36px;
+  opacity: 0.88;
+  letter-spacing: 0.3px;
+}
+
+/* ── CTA buttons ──────────────────── */
+.hero-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+  border: none;
+  padding: 14px 32px;
+  border-radius: 50px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 8px 24px rgba(34,197,94,0.4);
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(34,197,94,0.5);
+  background: linear-gradient(135deg, #16a34a, #15803d);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.12);
+  color: white;
+  border: 1.5px solid rgba(255,255,255,0.35);
+  padding: 14px 32px;
+  border-radius: 50px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background: rgba(255,255,255,0.22);
+  border-color: rgba(255,255,255,0.6);
+  transform: translateY(-2px);
+  color: white;
+}
+
+/* ── Scroll indicator ─────────────── */
 .scroll-indicator {
   position: absolute;
-  bottom: 20px;
+  bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
 }
 
 .mouse {
-  width: 30px;
-  height: 50px;
-  border: 2px solid white;
+  width: 28px;
+  height: 46px;
+  border: 2px solid rgba(255,255,255,0.7);
   border-radius: 20px;
   position: relative;
 }
@@ -134,24 +214,37 @@
 .mouse::before {
   content: '';
   position: absolute;
-  top: 10px;
+  top: 8px;
   left: 50%;
   transform: translateX(-50%);
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   background: white;
   border-radius: 50%;
-  animation: scroll 2s infinite;
+  animation: scrollAnim 2s infinite;
 }
 
-@keyframes scroll {
-  0% { top: 10px; opacity: 1; }
-  100% { top: 30px; opacity: 0; }
+@keyframes scrollAnim {
+  0%   { top: 8px;  opacity: 1; }
+  100% { top: 28px; opacity: 0; }
 }
 
+/* ── Responsive ───────────────────── */
 @media (max-width: 768px) {
-  .main-title { font-size: 3.5rem; }
-  .sub-title { font-size: 1.2rem; }
-  .kural { font-size: 1.3rem; }
-  .kural-container { padding: 20px; margin-bottom: 30px; }
+  .hero-content { padding-top: 80px; padding-bottom: 60px; }
+  .hero-brand-logo { height: 80px; }
+  .main-title { font-size: 3.2rem; letter-spacing: 2px; }
+  .sub-title { font-size: 1.1rem; }
+  .kural { font-size: 1.2rem; }
+  .kural-container { padding: 18px 20px; margin-bottom: 24px; }
+  .description { font-size: 0.95rem; }
+  .btn-primary, .btn-secondary { padding: 12px 24px; font-size: 0.95rem; }
+}
+
+@media (max-width: 480px) {
+  .hero-brand-logo { height: 66px; }
+  .main-title { font-size: 2.4rem; }
+  .sub-title { font-size: 0.95rem; }
+  .kural { font-size: 1rem; }
+  .hero-actions { flex-direction: column; align-items: center; }
 }

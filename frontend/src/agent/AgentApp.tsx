@@ -19,11 +19,13 @@ export default function AgentApp() {
       return;
     }
     if (adminUser.role !== 'AGENT' && adminUser.role !== 'WORKER') {
-      navigate('/admin/dashboard');
+      // Wrong role — redirect to login
+      navigate('/admin/login');
       return;
     }
     fetchTasks();
   }, [adminUser]);
+
 
   const handleLogout = async () => {
     await logout();

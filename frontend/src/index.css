@@ -165,4 +165,37 @@ h1, h2, h3, h4, h5, h6 {
   .section-padding {
     padding: 60px 0;
   }
+  .container {
+    padding: 0 16px;
+  }
 }
+
+@media (max-width: 480px) {
+  .section-title {
+    font-size: 1.6rem;
+  }
+  .section-padding {
+    padding: 44px 0;
+  }
+  .container {
+    padding: 0 12px;
+  }
+
+  /* Touch-friendly tap targets */
+  button, a {
+    min-height: 40px;
+  }
+}
+
+/* ── Admin dark mode responsive helpers ── */
+.admin-body {
+  background: #0b1118;
+}
+
+@media (max-width: 768px) {
+  /* Admin panel mobile sidebar overlay */
+  .admin-shell.sidebar-open .admin-main {
+    margin-left: 0 !important;
+  }
+}
+

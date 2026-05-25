@@ -2,7 +2,7 @@ import React, { useState, useEffect, Suspense, useRef } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation, Link } from 'react-router-dom';
 import {
   LayoutDashboard, MapPin, Users, ClipboardList, LogOut,
-  Menu, X, Leaf, RefreshCw, ShieldOff, Plus, Edit, MessageCircle,
+  Menu, X, Leaf, RefreshCw, Plus, Edit, MessageCircle,
   Image as ImageIcon, Video, FileText, Download, Upload
 } from 'lucide-react';
 import { useAdminStore } from '../admin/store/adminStore';
@@ -121,16 +121,10 @@ function OwnerTaskMedia({ taskId }: { taskId: string }) {
 function OwnerGuard({ children }: { children: React.ReactNode }) {
   const adminUser = useAdminStore(s => s.adminUser);
   if (!adminUser) return <Navigate to="/admin/login" replace />;
-  if (adminUser.role !== 'OWNER') return (
-    <div style={{ minHeight: '100vh', background: '#0b1118', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 16, fontFamily: 'Inter,sans-serif' }}>
-      <ShieldOff size={48} color="#f87171" />
-      <h2 style={{ color: '#f1f5f9', margin: 0 }}>Access Denied</h2>
-      <p style={{ color: '#64748b' }}>Owner role required</p>
-      <a href="/admin/login" style={{ color: '#22c55e', textDecoration: 'none' }}>← Back to Login</a>
-    </div>
-  );
+  if (adminUser.role !== 'OWNER') return <Navigate to="/admin/login" replace />;
   return children;
 }
+
 
 // ─── Sidebar ────────────────────────────────────────────────────────────────
 const NAV = [

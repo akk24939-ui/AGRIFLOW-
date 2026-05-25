@@ -492,12 +492,70 @@ body.admin-body {
 /* ─── Responsive ─────────────────────────────────────── */
 @media (max-width: 1024px) {
   .ag-chart-grid { grid-template-columns: 1fr; }
+  .ag-stat-grid  { grid-template-columns: repeat(2, 1fr); }
 }
+
 @media (max-width: 768px) {
   :root { --sidebar-w: 0px; }
-  .admin-shell.sidebar-open .ag-sidebar { width: 260px; }
-  .admin-content { padding: 20px 16px; }
+
+  /* Sidebar slides over content on mobile */
+  .ag-sidebar {
+    position: fixed !important;
+    left: -260px;
+    top: 0;
+    height: 100vh;
+    z-index: 200;
+    transition: left 0.3s ease;
+    width: 260px !important;
+    box-shadow: 4px 0 24px rgba(0,0,0,0.4);
+  }
+  .admin-shell.sidebar-open .ag-sidebar {
+    left: 0;
+  }
+
+  /* Overlay when sidebar open on mobile */
+  .admin-shell.sidebar-open::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 199;
+  }
+
+  .admin-main { margin-left: 0 !important; width: 100%; }
+  .ag-topbar  { left: 0 !important; width: 100% !important; }
+  .admin-content { padding: 16px 12px; }
+
+  /* Forms stack on mobile */
   .ag-form-grid { grid-template-columns: 1fr; }
-  .ag-stat-grid { grid-template-columns: repeat(2, 1fr); }
-  .ag-topbar { left: 0 !important; }
+  .ag-stat-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+
+  /* Tables scroll horizontally */
+  .ag-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  /* Modal full-screen on mobile */
+  .ag-modal-content {
+    width: 96vw !important;
+    max-width: none !important;
+    max-height: 92vh;
+    border-radius: 16px;
+  }
 }
+
+@media (max-width: 480px) {
+  .ag-stat-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .ag-stat-card { padding: 14px 12px; }
+  .ag-page-title { font-size: 1.2rem; }
+  .ag-topbar-title { font-size: 1rem; }
+
+  /* Full-width action buttons on small screens */
+  .ag-btn-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .ag-btn-row button, .ag-btn-row a {
+    width: 100%;
+    justify-content: center;
+  }
+}
+

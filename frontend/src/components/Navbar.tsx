@@ -8,36 +8,38 @@ const Navbar: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const scrollTo = (id: string) => {
+    setMenuOpen(false);
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   return (
     <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
       <div className="container nav-container">
-        <div className="logo-container">
-          <img src="/logo.jpg" alt="Panimugil Farm Developers" className="nav-logo" />
+        {/* Logo */}
+        <div className="logo-container" onClick={() => scrollTo('home')} style={{ cursor: 'pointer' }}>
+          <img src="/panimugil-logo.png" alt="Panimugil Farm Developers" className="nav-logo" />
         </div>
-        
+
+        {/* Desktop + Mobile nav links */}
         <div className={`nav-links ${menuOpen ? 'active' : ''}`}>
-          <a href="#home"     onClick={() => setMenuOpen(false)}>Home</a>
-          <a href="#projects" onClick={() => setMenuOpen(false)}>Projects</a>
-          <a href="#features" onClick={() => setMenuOpen(false)}>Features</a>
-          <a href="#contact"  onClick={() => setMenuOpen(false)} className="nav-contact-btn">Contact Us</a>
-          <Link
-            to="/admin/login"
-            onClick={() => setMenuOpen(false)}
-            className="nav-admin-btn"
-          >
-            <ShieldCheck size={15} style={{ verticalAlign:'middle', marginRight:5 }}/>
+          <button className="nav-link-btn" onClick={() => scrollTo('home')}>Home</button>
+          <button className="nav-link-btn" onClick={() => scrollTo('projects')}>Projects</button>
+          <button className="nav-link-btn" onClick={() => scrollTo('features')}>Features</button>
+          <button className="nav-link-btn nav-contact-btn" onClick={() => scrollTo('contact')}>Contact Us</button>
+          <Link to="/admin/login" onClick={() => setMenuOpen(false)} className="nav-admin-btn">
+            <ShieldCheck size={15} style={{ verticalAlign: 'middle', marginRight: 5 }} />
             Admin Panel
           </Link>
         </div>
 
-        <button className="mobile-menu-btn" onClick={() => setMenuOpen(!menuOpen)}>
+        <button className="mobile-menu-btn" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu">
           {menuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
@@ -46,4 +48,3 @@ const Navbar: React.FC = () => {
 };
 
 export default Navbar;
-

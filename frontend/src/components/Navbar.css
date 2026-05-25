@@ -3,75 +3,101 @@
   top: 0;
   left: 0;
   width: 100%;
-  padding: 20px 0;
+  padding: 12px 0;
   z-index: 1000;
   transition: all 0.3s ease;
   background: transparent;
 }
 
 .navbar.scrolled {
-  background: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-  padding: 10px 0;
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  padding: 8px 0;
+  backdrop-filter: blur(12px);
 }
 
 .nav-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 0 24px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
+/* ── Logo ─────────────────────────────── */
 .logo-container {
   display: flex;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .nav-logo {
-  height: 60px;
+  height: 56px;
   width: auto;
+  object-fit: contain;
   transition: height 0.3s ease;
+  /* Keep logo visible on dark + light bg */
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));
 }
 
 .navbar.scrolled .nav-logo {
-  height: 50px;
+  height: 46px;
+  filter: none;
 }
 
+/* ── Nav links (desktop) ──────────────── */
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 30px;
+  gap: 8px;
 }
 
-.nav-links a {
+/* Base nav link reset (buttons acting as links) */
+.nav-link-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
   color: white;
-  text-decoration: none;
   font-weight: 600;
-  font-size: 1.05rem;
-  transition: color 0.3s ease;
+  font-size: 0.97rem;
+  font-family: inherit;
+  padding: 8px 14px;
+  border-radius: 8px;
+  transition: color 0.2s, background 0.2s;
   text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  white-space: nowrap;
 }
 
-.navbar.scrolled .nav-links a {
-  color: var(--dark-green);
+.nav-link-btn:hover {
+  color: #22c55e;
+  background: rgba(255,255,255,0.1);
+}
+
+.navbar.scrolled .nav-link-btn {
+  color: #1a2e1a;
   text-shadow: none;
 }
 
-.nav-links a:hover {
-  color: var(--primary-green);
+.navbar.scrolled .nav-link-btn:hover {
+  color: #16a34a;
+  background: rgba(34,197,94,0.08);
 }
 
+/* Contact Us pill */
 .nav-contact-btn {
-  background: var(--primary-green);
-  padding: 10px 20px;
-  border-radius: 50px;
+  background: #22c55e !important;
   color: white !important;
   text-shadow: none !important;
-  box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);
+  padding: 9px 20px !important;
+  border-radius: 50px !important;
+  box-shadow: 0 4px 12px rgba(34,197,94,0.3);
 }
 
 .nav-contact-btn:hover {
-  background: var(--dark-green);
+  background: #16a34a !important;
   color: white !important;
+  transform: translateY(-1px);
 }
 
 /* Admin Panel button */
@@ -85,12 +111,13 @@
   border-radius: 50px;
   color: #22c55e !important;
   text-shadow: none !important;
-  font-size: 0.9rem !important;
+  font-size: 0.88rem !important;
   font-weight: 700 !important;
   text-decoration: none;
   transition: all 0.3s ease;
   box-shadow: 0 4px 14px rgba(34, 197, 94, 0.2);
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .nav-admin-btn:hover {
@@ -105,20 +132,28 @@
   color: #22c55e !important;
 }
 
-
+/* ── Mobile hamburger ─────────────────── */
 .mobile-menu-btn {
   display: none;
   background: transparent;
   border: none;
   color: white;
   cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.mobile-menu-btn:hover {
+  background: rgba(255,255,255,0.1);
 }
 
 .navbar.scrolled .mobile-menu-btn {
-  color: var(--dark-green);
+  color: #1a2e1a;
 }
 
-@media (max-width: 768px) {
+/* ── Responsive ───────────────────────── */
+@media (max-width: 900px) {
   .mobile-menu-btn {
     display: block;
   }
@@ -130,19 +165,54 @@
     width: 100%;
     background: white;
     flex-direction: column;
-    padding: 20px 0;
-    gap: 20px;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    align-items: stretch;
+    padding: 12px 16px 20px;
+    gap: 4px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.12);
     clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
-    transition: clip-path 0.4s ease-in-out;
+    transition: clip-path 0.35s ease-in-out;
+    z-index: 999;
   }
 
   .nav-links.active {
     clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
   }
 
-  .nav-links a {
-    color: var(--dark-green);
-    text-shadow: none;
+  .nav-link-btn {
+    color: #1a2e1a !important;
+    text-shadow: none !important;
+    text-align: left;
+    padding: 12px 16px;
+    font-size: 1rem;
+    border-radius: 10px;
+  }
+
+  .nav-link-btn:hover {
+    background: rgba(34,197,94,0.08) !important;
+    color: #16a34a !important;
+  }
+
+  .nav-contact-btn {
+    text-align: center !important;
+    margin: 4px 0;
+  }
+
+  .nav-admin-btn {
+    justify-content: center;
+    margin: 4px 0;
+    border-radius: 12px !important;
+  }
+
+  .nav-logo {
+    height: 44px;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-container {
+    padding: 0 16px;
+  }
+  .nav-logo {
+    height: 38px;
   }
 }

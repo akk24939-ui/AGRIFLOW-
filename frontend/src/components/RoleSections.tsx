@@ -1,14 +1,14 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle2, ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './RoleSections.css';
 
 const roles = [
   {
     title: 'Customer',
     subtitle: 'For Land Owners',
-    image: 'https://images.openai.com/static-rsc-4/5VK1PU2Hfdvo0ix3PBiiJ1UhG9RezrRwJTAvREx9yHKvKJPgSwsY6qGMJ5AfY5jYf8bSnfguyFUTcGVV9gSJo010RPTdzWc3RQIJM1qfGUBekRWN3H7-lT2qg7qXkGApANBAI2uoUcAac0vlPqy6bYvhSdnYg8wFMX7UXAdDCFTkD6XtXZCFD6S3Tgj2joIF?purpose=fullsize',
+    image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
     features: [
       'Live Farming Updates',
       'Photo & Video Reports',
@@ -18,12 +18,14 @@ const roles = [
       'Land Activity Timeline'
     ],
     cta: 'Monitor Your Land',
-    color: 'var(--primary-green)'
+    color: '#22c55e',
+    route: '/customer',
+    roleHint: 'customer'
   },
   {
     title: 'Owner',
     subtitle: 'Farm Management & Operations',
-    image: 'https://images.openai.com/static-rsc-4/8u-C2fMfjS6AvA4hvCdRz6cJa6LuA8Q839cbYcssAINMEPgn9QYfBUgTjctDZvkjSuwu7zo3grZY_eYwPR28jxZK6LHvhRgO8R_Hia9yVZLmdZgVbF4-0wyGkuAE69Q0v6yfV0ME4F0GvWkhnHhuNxXkZUHxnLhxpXxHHGzhk0J4IwTm1yyc847flm_NL-nC?purpose=fullsize',
+    image: 'https://images.unsplash.com/photo-1574943320219-553eb213f72d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
     features: [
       'Task Assignment',
       'Worker Tracking',
@@ -33,12 +35,14 @@ const roles = [
       'Performance Reports'
     ],
     cta: 'Manage Operations',
-    color: 'var(--earth-brown)'
+    color: '#f59e0b',
+    route: '/owner',
+    roleHint: 'owner'
   },
   {
     title: 'Worker / Agent',
     subtitle: 'Smart Field Work Upload',
-    image: 'https://images.openai.com/static-rsc-4/UYO6ME_UVfCfe5hrzlZ1WWItsb5KX_N6i9ZV6yUevM5G8OaG-IjXsbyXI3lonpXOJ6gY37fNP4wdyfZO-AuzMC-sRzIdMdB4WBgIzg5HWHh6zPnb2keDwe8CohLtl1fK8ldqEjLituCGtKBcPJcL8f-twIq3CKgiz4pfr7xZ71JpYnZgSSuw3gxFYrA5BxlM?purpose=fullsize',
+    image: 'https://images.unsplash.com/photo-1589923188900-85dae523342b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
     features: [
       'Upload Photos/Videos/PDF',
       'Daily Work Reports',
@@ -48,53 +52,74 @@ const roles = [
       'Instant Notifications'
     ],
     cta: "Upload Today's Work",
-    color: 'var(--sky-blue)'
+    color: '#38bdf8',
+    route: '/agent',
+    roleHint: 'agent'
   }
 ];
 
 const RoleSections: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleRoleClick = (route: string) => {
+    // Navigate to the portal — each portal has its own login guard
+    navigate(route);
+  };
+
   return (
-    <section className="roles-section section-padding" id="login">
+    <section className="roles-section section-padding" id="features">
       <div className="container">
-        <h2 className="section-title">Ecosystem Roles</h2>
-        
+        <div className="section-header">
+          <span className="section-badge">Platform Roles</span>
+          <h2 className="section-title">Ecosystem Roles</h2>
+          <p className="section-desc">
+            A complete farm management platform with dedicated dashboards for every stakeholder.
+          </p>
+        </div>
+
         <div className="roles-grid">
           {roles.map((role, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ delay: index * 0.2, duration: 0.6 }}
+              viewport={{ once: true, margin: '-80px' }}
+              transition={{ delay: index * 0.15, duration: 0.55 }}
               className="role-card"
             >
+              {/* Card image */}
               <div className="role-image-container">
                 <img src={role.image} alt={role.title} className="role-image" loading="lazy" />
-                <div className="role-overlay" style={{ background: `linear-gradient(to top, rgba(0,0,0,0.8), transparent)` }}>
+                <div className="role-overlay">
                   <h3 className="role-main-title">{role.title}</h3>
                   <h4 className="role-subtitle">{role.subtitle}</h4>
                 </div>
               </div>
-              
+
+              {/* Card body */}
               <div className="role-content">
                 <ul className="role-features">
                   {role.features.map((feature, i) => (
-                    <motion.li 
+                    <motion.li
                       key={i}
                       initial={{ opacity: 0, x: -10 }}
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
-                      transition={{ delay: (index * 0.2) + (i * 0.1) }}
+                      transition={{ delay: index * 0.15 + i * 0.07 }}
                     >
-                      <CheckCircle2 size={18} style={{ color: role.color }} className="feature-icon" />
+                      <CheckCircle2 size={17} style={{ color: role.color, flexShrink: 0 }} />
                       <span>{feature}</span>
                     </motion.li>
                   ))}
                 </ul>
-                
-                <Link to="/admin/login" className="role-btn" style={{ '--hover-color': role.color, display: 'flex', textDecoration: 'none' } as React.CSSProperties}>
-                  {role.cta} <ArrowRight size={18} />
-                </Link>
+
+                <button
+                  className="role-btn"
+                  style={{ '--hover-color': role.color, borderColor: role.color } as React.CSSProperties}
+                  onClick={() => handleRoleClick(role.route)}
+                >
+                  {role.cta} <ArrowRight size={17} />
+                </button>
               </div>
             </motion.div>
           ))}
