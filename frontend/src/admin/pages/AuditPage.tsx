@@ -8,120 +8,156 @@ const ACTION_COLORS: Record<string, string> = {
   USER_CREATED:    '#22c55e',
   USER_DELETED:    '#f87171',
   USER_DISABLED:   '#fbbf24',
+  USER_UPDATED:    '#38bdf8',
   PASSWORD_CHANGED:'#38bdf8',
   LAND_CREATED:    '#a78bfa',
+  USER_LOGIN:      '#22c55e',
 };
 
 export default function AuditPage() {
   const { auditLogs, fetchAuditLogs } = useAdminStore();
-  const [search, setSearch]     = useState('');
-  const [deleting, setDeleting] = useState<string | null>(null);
+  const [search, setSearch]       = useState('');
+  const [deleting, setDeleting]   = useState<string | null>(null);
+  const [deletingAll, setDeletingAll] = useState(false);
 
   useEffect(() => { fetchAuditLogs(); }, []);
 
   const filtered = auditLogs.filter(l => {
     const q = search.toLowerCase();
-    return !q || l.action.toLowerCase().includes(q) || (l.target_user || '').toLowerCase().includes(q) || l.performed_by.toLowerCase().includes(q);
+    return !q
+      || l.action.toLowerCase().includes(q)
+      || (l.target_user || '').toLowerCase().includes(q)
+      || l.performed_by.toLowerCase().includes(q);
   });
 
   const deleteOne = async (id: string) => {
     if (!window.confirm('Permanently delete this audit log entry?')) return;
     setDeleting(id);
     try {
-      await (adminApi as any).deleteAuditLog?.(id).catch(() => {});
+      await adminApi.deleteAuditLog(id);
       await fetchAuditLogs();
       showToast('Log entry removed', 'success');
+    } catch {
+      showToast('Failed to delete entry', 'error');
     } finally { setDeleting(null); }
   };
 
   const deleteAll = async () => {
-    if (!window.confirm(`Permanently delete all audit log entries? This action cannot be undone.`)) return;
+    if (!window.confirm(`Permanently delete ALL ${filtered.length} log entries? This cannot be undone.`)) return;
+    setDeletingAll(true);
     try {
-      await (adminApi as any).deleteAllAuditLogs?.().catch(() => {});
+      await adminApi.deleteAllAuditLogs();
       await fetchAuditLogs();
-      showToast(`All audit logs cleared`, 'success');
-    } catch (e) {
-      showToast('Error clearing logs', 'error');
-    }
+      showToast('All audit logs cleared', 'success');
+    } catch {
+      showToast('Failed to clear logs', 'error');
+    } finally { setDeletingAll(false); }
   };
 
   return (
-    <div style={{ padding: '1.5rem', fontFamily: "'Inter',sans-serif" }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem', flexWrap: 'wrap', gap: 10 }}>
+    <div className="ag-page">
+      {/* ── Header ── */}
+      <div className="ag-page-header">
         <div>
-          <h1 style={{ color: '#f1f5f9', fontSize: '1.4rem', fontWeight: 700, margin: 0 }}>Audit Logs</h1>
-          <p style={{ color: '#64748b', fontSize: '0.85rem', marginTop: 4 }}>Complete admin activity trail — immutable record</p>
+          <h1 className="ag-page-title">Audit Logs</h1>
+          <p className="ag-page-subtitle">Complete admin activity trail</p>
         </div>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
-          <span style={{ color: '#38bdf8', background: 'rgba(56,189,248,0.1)', padding: '4px 12px', borderRadius: 20, fontSize: '0.85rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}>
-            <FileText size={14}/> {filtered.length} entries
+          <span className="ag-badge-blue">
+            <FileText size={13}/> {filtered.length} entries
           </span>
           <button
+            className="ag-btn ag-btn-danger-outline"
             onClick={deleteAll}
-            disabled={filtered.length === 0}
-            style={{ padding: '0.45rem 0.9rem', borderRadius: 8, border: 'none', cursor: filtered.length === 0 ? 'not-allowed' : 'pointer', background: 'rgba(239,68,68,0.12)', color: '#f87171', display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.82rem', fontWeight: 600, opacity: filtered.length === 0 ? 0.5 : 1 }}
+            disabled={filtered.length === 0 || deletingAll}
           >
-            <Trash2 size={13}/> Delete All
+            <Trash2 size={14}/> {deletingAll ? 'Clearing…' : 'Delete All'}
           </button>
-          <button
-            onClick={() => fetchAuditLogs()}
-            style={{ padding: '0.45rem 0.9rem', borderRadius: 8, border: 'none', cursor: 'pointer', background: '#1e293b', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.82rem', fontWeight: 500 }}
-          >
-            <RefreshCw size={13} /> Refresh
+          <button className="ag-btn ag-btn-secondary" onClick={() => fetchAuditLogs()}>
+            <RefreshCw size={14}/> Refresh
           </button>
         </div>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, padding: '0 0.75rem', maxWidth: 400, marginBottom: '1.5rem' }}>
-        <Search size={15} color="#64748b" />
+      {/* ── Search ── */}
+      <div className="ag-search-bar" style={{ maxWidth: 440, marginBottom: '1.5rem' }}>
+        <Search size={15} color="var(--text-muted)" />
         <input
+          className="ag-search-input"
           placeholder="Search action, user, performed by…"
           value={search}
           onChange={e => setSearch(e.target.value)}
-          style={{ background: 'none', border: 'none', color: '#f1f5f9', padding: '0.6rem 0.5rem', outline: 'none', width: '100%', fontSize: '0.85rem' }}
         />
       </div>
 
-      <div style={{ background: 'rgba(15,25,35,0.9)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, overflowX: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem', minWidth: 700 }}>
-          <thead>
-            <tr>
-              {['#', 'Action', 'Performed By', 'Target User', 'Timestamp', 'IP Address', 'Details', ''].map(h => (
-                <th key={h} style={{ color: '#64748b', textAlign: 'left', padding: '0.75rem 1rem', fontWeight: 500, borderBottom: '1px solid rgba(255,255,255,0.05)', whiteSpace: 'nowrap' }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.length === 0 ? (
-              <tr><td colSpan={8} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>No logs found</td></tr>
-            ) : filtered.map((l, i) => {
-              const color = ACTION_COLORS[l.action] || '#94a3b8';
-              return (
-                <tr key={l.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.02)' }}>
-                  <td style={{ padding: '0.75rem 1rem', color: '#64748b', fontSize: '0.75rem' }}>{filtered.length - i}</td>
-                  <td style={{ padding: '0.75rem 1rem' }}>
-                    <span style={{ color, background: `${color}15`, padding: '2px 8px', borderRadius: 20, fontSize: '0.7rem', fontWeight: 600 }}>{l.action.replace(/_/g, ' ')}</span>
-                  </td>
-                  <td style={{ padding: '0.75rem 1rem', color: '#22c55e', fontWeight: 600 }}>{l.performed_by}</td>
-                  <td style={{ padding: '0.75rem 1rem', color: '#f1f5f9', fontWeight: 500 }}>{l.target_user || '—'}</td>
-                  <td style={{ padding: '0.75rem 1rem', color: '#94a3b8', fontSize: '0.8rem' }}>{l.created_at ? new Date(l.created_at).toLocaleString() : '—'}</td>
-                  <td style={{ padding: '0.75rem 1rem', color: '#38bdf8', fontFamily: 'monospace' }}>{'127.0.0.1'}</td>
-                  <td style={{ padding: '0.75rem 1rem', color: '#64748b', maxWidth: 220, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{l.details || '—'}</td>
-                  <td style={{ padding: '0.75rem 0.5rem' }}>
-                    <button
-                      onClick={() => deleteOne(l.id)}
-                      disabled={deleting === l.id}
-                      title="Delete this entry"
-                      style={{ padding: '4px 8px', borderRadius: 6, border: 'none', cursor: 'pointer', background: 'rgba(239,68,68,0.1)', color: '#f87171', display: 'flex', alignItems: 'center' }}
-                    >
-                      <Trash2 size={13}/>
-                    </button>
+      {/* ── Table ── */}
+      <div className="ag-card" style={{ padding: 0, overflow: 'hidden' }}>
+        <div style={{ overflowX: 'auto' }}>
+          <table className="ag-table" style={{ minWidth: 750 }}>
+            <thead>
+              <tr>
+                <th style={{ width: 48 }}>#</th>
+                <th style={{ width: 160 }}>Action</th>
+                <th>Performed By</th>
+                <th>Target User</th>
+                <th style={{ width: 170 }}>Timestamp</th>
+                <th style={{ width: 110 }}>IP Address</th>
+                <th>Details</th>
+                <th style={{ width: 52 }}></th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.length === 0 ? (
+                <tr>
+                  <td colSpan={8} style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
+                    No audit logs found
                   </td>
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
+              ) : filtered.map((l, i) => {
+                const color = ACTION_COLORS[l.action] || 'var(--text-muted)';
+                return (
+                  <tr key={l.id}>
+                    <td style={{ color: 'var(--text-muted)', fontSize: '0.78rem' }}>
+                      {filtered.length - i}
+                    </td>
+                    <td>
+                      <span style={{
+                        color,
+                        background: `${color === 'var(--text-muted)' ? 'rgba(148,163,184' : color.replace('#','rgba(').replace(/^rgba\(([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})/, (_,r,g,b)=>`rgba(${parseInt(r,16)},${parseInt(g,16)},${parseInt(b,16)}`)},0.12)`,
+                        padding: '3px 10px', borderRadius: 20,
+                        fontSize: '0.72rem', fontWeight: 700, whiteSpace: 'nowrap',
+                        letterSpacing: '0.02em',
+                      }}>
+                        {l.action.replace(/_/g, ' ')}
+                      </span>
+                    </td>
+                    <td style={{ color: 'var(--ag-green)', fontWeight: 600 }}>{l.performed_by}</td>
+                    <td style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{l.target_user || '—'}</td>
+                    <td style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', whiteSpace: 'nowrap' }}>
+                      {l.created_at ? new Date(l.created_at).toLocaleString('en-IN') : '—'}
+                    </td>
+                    <td style={{ color: 'var(--ag-blue)', fontFamily: 'monospace', fontSize: '0.82rem' }}>
+                      127.0.0.1
+                    </td>
+                    <td style={{ color: 'var(--text-muted)', maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '0.8rem' }}>
+                      {l.details || '—'}
+                    </td>
+                    <td>
+                      <button
+                        onClick={() => deleteOne(l.id)}
+                        disabled={deleting === l.id}
+                        title="Delete entry"
+                        className="ag-icon-btn ag-icon-btn-danger"
+                      >
+                        <Trash2 size={13}/>
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

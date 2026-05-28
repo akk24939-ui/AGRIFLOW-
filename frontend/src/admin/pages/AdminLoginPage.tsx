@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ShieldCheck, Eye, EyeOff, Loader2, ArrowLeft } from 'lucide-react';
 import { authApi } from '../api';
 import { useAdminStore } from '../store/adminStore';
@@ -78,12 +78,19 @@ export default function AdminLoginPage() {
         boxSizing: 'border-box' as const,
       }}>
         {/* Back to Home */}
-        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 5, color: '#64748b', fontSize: '0.78rem', textDecoration: 'none', marginBottom: '1.25rem', transition: 'color 0.2s' }}
+        <button
+          onClick={() => navigate('/')}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 6,
+            color: '#64748b', fontSize: '0.78rem', background: 'none',
+            border: 'none', cursor: 'pointer', marginBottom: '1.25rem',
+            padding: 0, fontFamily: 'inherit', transition: 'color 0.2s',
+          }}
           onMouseEnter={e => (e.currentTarget.style.color = '#22c55e')}
           onMouseLeave={e => (e.currentTarget.style.color = '#64748b')}
         >
           <ArrowLeft size={14} /> Back to Home
-        </Link>
+        </button>
 
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
