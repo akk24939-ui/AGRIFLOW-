@@ -30,7 +30,7 @@ export default function ChangePasswordModal({ user, onClose }: { user: User; onC
 
   const onSubmit = async (data: FormData) => {
     try {
-      await usersApi.changePassword(user.id, data.newPassword);
+      await usersApi.changePassword(user.id, { new_password: data.newPassword, confirm_password: data.confirm });
       showToast(`Password updated for ${user.full_name}`, 'success');
       onClose();
     } catch (err: any) {
