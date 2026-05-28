@@ -30,11 +30,14 @@ export default function CreateTaskModal({ onClose }: { onClose: () => void }) {
     
   const myLandIds = availableLands.map(l => l.land_id);
 
-  // Filter agents based on selected land or all lands if no land selected
+  // Filter agents based on selected land — supports multi-land (comma-separated) agents
   const availableAgents = users.filter(u => {
-    if (u.role !== 'AGENT') return false;
-    if (form.land_id) return u.land_id === form.land_id;
-    if (adminUser?.role === 'OWNER') return u.land_id && myLandIds.includes(u.land_id);
+    if (u.role !== 'AGENT' && u.role !== 'WORKER') return false;
+    if (!u.land_id) return false;
+    // Agent's land_id may be "TN-01,TN-02,TN-03" — split and check inclusion
+    const agentLands = u.land_id.split(',').map((s: string) => s.trim());
+    if (form.land_id) return agentLands.includes(form.land_id);
+    if (adminUser?.role === 'OWNER') return agentLands.some((al: string) => myLandIds.includes(al));
     return true; // Admin sees all
   });
 
@@ -138,7 +141,7 @@ export default function CreateTaskModal({ onClose }: { onClose: () => void }) {
                 <select className={`${inpClass} ag-select`} value={form.assigned_to} onChange={e => setForm({...form, assigned_to: e.target.value})}>
                   <option value="">-- Leave Unassigned --</option>
                   {availableAgents.map(a => (
-                    <option key={a.id} value={a.id}>{a.full_name} ({a.land_id || 'No Land'})</option>
+                    <option key={a.id} value={a.id}>{a.full_name} ({a.role}) — {a.land_id || 'No Land'}</option>
                   ))}
                 </select>
                 {form.land_id && availableAgents.length === 0 && (
