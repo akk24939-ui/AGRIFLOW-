@@ -130,7 +130,7 @@ function OwnerGuard({ children }: { children: React.ReactNode }) {
 const NAV = [
   { label: 'Dashboard',  icon: LayoutDashboard, path: '/owner/dashboard'   },
   { label: 'My Lands',   icon: MapPin,           path: '/owner/lands'       },
-  { label: 'Customers',  icon: Users,            path: '/owner/customers'   },
+  { label: 'My People',  icon: Users,            path: '/owner/customers'   },
   { label: 'Tasks',      icon: ClipboardList,    path: '/owner/tasks'       },
   { label: 'Complaints', icon: MessageCircle,    path: '/owner/complaints'  },
 ];
@@ -335,28 +335,93 @@ function OwnerLandsPage() {
   );
 }
 
-// ─── Owner Customers Page ────────────────────────────────────────────────────
+// ─── Owner People Page (Agents + Customers separated) ───────────────────────
 function OwnerCustomersPage() {
   const { adminUser, lands, users, fetchUsers, fetchLands, loading } = useAdminStore();
   const [showCreate, setShowCreate] = useState(false);
   const [editUser, setEditUser] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState<'agents' | 'customers'>('customers');
 
   useEffect(() => { fetchUsers(); fetchLands(); }, []);
 
   const myLandIds = lands.filter(l => l.owner_id === adminUser?.id).map(l => l.land_id);
-  const myCustomers = users.filter(u => {
-    if (u.role !== 'CUSTOMER' && u.role !== 'AGENT') return false;
+
+  const isLinked = (u: any) => {
     if (!u.land_id) return false;
-    const userLands = u.land_id.split(',').map(s => s.trim());
-    return userLands.some(ul => myLandIds.includes(ul));
-  });
+    const userLands = u.land_id.split(',').map((s: string) => s.trim());
+    return userLands.some((ul: string) => myLandIds.includes(ul));
+  };
+
+  const myAgents    = users.filter(u => (u.role === 'AGENT' || u.role === 'WORKER') && isLinked(u));
+  const myCustomers = users.filter(u => u.role === 'CUSTOMER' && isLinked(u));
+  const displayList = activeTab === 'agents' ? myAgents : myCustomers;
+
+  const tabBtn = (tab: 'agents' | 'customers', label: string, count: number) => (
+    <button
+      onClick={() => setActiveTab(tab)}
+      style={{
+        padding: '0.5rem 1.25rem', borderRadius: 8, border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem',
+        background: activeTab === tab ? 'linear-gradient(135deg,#22c55e,#16a34a)' : 'rgba(255,255,255,0.05)',
+        color: activeTab === tab ? '#fff' : '#94a3b8',
+        display: 'flex', alignItems: 'center', gap: 6,
+      }}
+    >
+      {label}
+      <span style={{ background: 'rgba(255,255,255,0.15)', borderRadius: 20, padding: '1px 7px', fontSize: '0.75rem' }}>{count}</span>
+    </button>
+  );
+
+  const UserTable = ({ list }: { list: any[] }) => (
+    <div style={{ background: 'rgba(15,25,35,0.9)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, overflow: 'auto' }}>
+      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem', minWidth: 700 }}>
+        <thead>
+          <tr>
+            {['Full Name', 'Username', 'Role', 'Email', 'Phone', 'Land ID', 'Status', 'Actions'].map(h => (
+              <th key={h} style={{ color: '#64748b', textAlign: 'left', padding: '0.75rem 1rem', fontWeight: 500, borderBottom: '1px solid rgba(255,255,255,0.05)', whiteSpace: 'nowrap' }}>{h}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {list.length === 0 ? (
+            <tr><td colSpan={8} style={{ textAlign: 'center', padding: '3rem', color: '#64748b' }}>No {activeTab} linked to your lands yet</td></tr>
+          ) : list.map(u => (
+            <tr key={u.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.02)' }}>
+              <td style={{ padding: '0.75rem 1rem', color: '#f1f5f9', fontWeight: 500 }}>{u.full_name}</td>
+              <td style={{ padding: '0.75rem 1rem', color: '#94a3b8', fontFamily: 'monospace', fontSize: '0.8rem' }}>{u.username}</td>
+              <td style={{ padding: '0.75rem 1rem' }}>
+                <span style={{ fontSize: '0.7rem', fontWeight: 600, padding: '2px 8px', borderRadius: 20,
+                  background: u.role === 'AGENT' || u.role === 'WORKER' ? 'rgba(56,189,248,0.12)' : 'rgba(167,243,208,0.12)',
+                  color:      u.role === 'AGENT' || u.role === 'WORKER' ? '#38bdf8' : '#6ee7b7' }}>
+                  {u.role}
+                </span>
+              </td>
+              <td style={{ padding: '0.75rem 1rem', color: '#94a3b8', fontSize: '0.8rem' }}>{u.email || '—'}</td>
+              <td style={{ padding: '0.75rem 1rem', color: '#94a3b8' }}>{u.phone || '—'}</td>
+              <td style={{ padding: '0.75rem 1rem', color: '#38bdf8', fontFamily: 'monospace', fontWeight: 600, fontSize: '0.78rem' }}>{u.land_id || '—'}</td>
+              <td style={{ padding: '0.75rem 1rem' }}>
+                <span style={{ color: u.is_active ? '#22c55e' : '#f87171', background: u.is_active ? 'rgba(34,197,94,0.1)' : 'rgba(248,113,113,0.1)', padding: '2px 8px', borderRadius: 20, fontSize: '0.7rem', fontWeight: 600 }}>
+                  {u.is_active ? 'Active' : 'Disabled'}
+                </span>
+              </td>
+              <td style={{ padding: '0.75rem 1rem' }}>
+                <button onClick={() => setEditUser(u)} style={{ padding: '6px 10px', borderRadius: 6, background: 'rgba(167,139,250,0.15)', border: 'none', cursor: 'pointer', color: '#a78bfa', display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.78rem', fontWeight: 600 }} title="Edit">
+                  <Edit size={13} /> Edit
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 
   return (
     <div style={{ padding: '1.5rem', fontFamily: 'Inter,sans-serif' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+      {/* Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: 12 }}>
         <div>
-          <h1 style={{ color: '#f1f5f9', fontSize: '1.4rem', fontWeight: 700, margin: 0 }}>My People (Customers & Agents)</h1>
-          <p style={{ color: '#64748b', fontSize: '0.85rem', marginTop: 4 }}>{myCustomers.length} people linked to your lands</p>
+          <h1 style={{ color: '#f1f5f9', fontSize: '1.4rem', fontWeight: 700, margin: 0 }}>My People</h1>
+          <p style={{ color: '#64748b', fontSize: '0.85rem', marginTop: 4 }}>{myAgents.length} agents · {myCustomers.length} customers linked to your lands</p>
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
           <button onClick={() => { fetchUsers(); fetchLands(); }} style={{ padding: '0.5rem 1rem', borderRadius: 8, border: 'none', cursor: 'pointer', background: '#1e293b', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.85rem' }}>
@@ -368,44 +433,23 @@ function OwnerCustomersPage() {
         </div>
       </div>
 
-      {showCreate && <CreateUserModal onClose={() => { setShowCreate(false); fetchUsers(); }} />}
-      {editUser && <EditUserModal user={editUser} onClose={() => { setEditUser(null); fetchUsers(); }} />}
-
-      <div style={{ background: 'rgba(15,25,35,0.9)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, overflow: 'hidden' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
-          <thead>
-            <tr>
-              {['Full Name', 'Username', 'Email', 'Phone', 'Land ID', 'Status', 'Joined', 'Actions'].map(h => (
-                <th key={h} style={{ color: '#64748b', textAlign: 'left', padding: '0.75rem 1rem', fontWeight: 500, borderBottom: '1px solid rgba(255,255,255,0.05)' }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {myCustomers.length === 0 ? (
-              <tr><td colSpan={7} style={{ textAlign: 'center', padding: '3rem', color: '#64748b' }}>No customers linked to your lands yet</td></tr>
-            ) : myCustomers.map(u => (
-              <tr key={u.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.02)' }}>
-                <td style={{ padding: '0.75rem 1rem', color: '#f1f5f9', fontWeight: 500 }}>{u.full_name}</td>
-                <td style={{ padding: '0.75rem 1rem', color: '#94a3b8', fontFamily: 'monospace', fontSize: '0.8rem' }}>{u.username}</td>
-                <td style={{ padding: '0.75rem 1rem', color: '#94a3b8', fontSize: '0.8rem' }}>{u.email}</td>
-                <td style={{ padding: '0.75rem 1rem', color: '#94a3b8' }}>{u.phone || '—'}</td>
-                <td style={{ padding: '0.75rem 1rem', color: '#38bdf8', fontFamily: 'monospace', fontWeight: 600, fontSize: '0.8rem' }}>{u.land_id}</td>
-                <td style={{ padding: '0.75rem 1rem' }}>
-                  <span style={{ color: u.is_active ? '#22c55e' : '#f87171', background: u.is_active ? 'rgba(34,197,94,0.1)' : 'rgba(248,113,113,0.1)', padding: '2px 8px', borderRadius: 20, fontSize: '0.7rem', fontWeight: 600 }}>
-                    {u.is_active ? 'Active' : 'Disabled'}
-                  </span>
-                </td>
-                <td style={{ padding: '0.75rem 1rem', color: '#64748b', fontSize: '0.75rem' }}>{u.created_at ? new Date(u.created_at).toLocaleDateString() : '—'}</td>
-                <td style={{ padding: '0.75rem 1rem' }}>
-                  <button onClick={() => setEditUser(u)} style={{ padding: '6px', borderRadius: 6, background: 'rgba(167,139,250,0.15)', border: 'none', cursor: 'pointer', color: '#a78bfa', display: 'flex', alignItems: 'center', justifyContent: 'center' }} title="Edit">
-                    <Edit size={14} />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {/* Tab Switcher */}
+      <div style={{ display: 'flex', gap: 8, marginBottom: '1.25rem' }}>
+        {tabBtn('agents',    '🧑‍🌾 Agents',    myAgents.length)}
+        {tabBtn('customers', '👤 Customers', myCustomers.length)}
       </div>
+
+      {showCreate && <CreateUserModal onClose={() => { setShowCreate(false); fetchUsers(); }} />}
+      {editUser   && <EditUserModal user={editUser} onClose={() => { setEditUser(null); fetchUsers(); }} />}
+
+      {/* Section heading */}
+      <div style={{ marginBottom: '0.75rem' }}>
+        <h2 style={{ color: '#94a3b8', fontSize: '0.8rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', margin: 0 }}>
+          {activeTab === 'agents' ? '🧑‍🌾 Field Agents & Workers' : '👤 Land Customers'}
+        </h2>
+      </div>
+
+      <UserTable list={displayList} />
     </div>
   );
 }

@@ -241,44 +241,78 @@ export default function CustomerApp() {
                 ) : (
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '1.5rem', marginTop: '1rem' }}>
                     {allMedia.flatMap(item =>
-                      item.media.map((m: any) => (
-                        <div key={m.id} style={{ background: 'rgba(15,25,35,0.9)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, overflow: 'hidden' }}>
-                          <div style={{ height: 180, background: '#0b1118', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-                            {m.file_type && m.file_type.startsWith('image/') ? (
-                              <img
-                                src={`http://localhost:8005${m.file_url}`}
-                                alt="Task Proof"
-                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                              />
-                            ) : m.file_type && m.file_type.startsWith('video/') ? (
-                              <video controls style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#000' }}>
-                                <source src={`http://localhost:8005${m.file_url}`} type={m.file_type} />
-                              </video>
-                            ) : (
-                              <a
-                                href={`http://localhost:8005${m.file_url}`}
-                                target="_blank"
-                                rel="noreferrer"
-                                style={{ color: '#38bdf8', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}
-                              >
-                                <ImageIcon size={40} color="#f97316" />
-                                <span style={{ fontSize: '0.8rem' }}>📄 View Document</span>
-                              </a>
-                            )}
-                          </div>
-                          <div style={{ padding: '0.75rem 1rem' }}>
-                            <h4 style={{ color: '#f1f5f9', margin: '0 0 4px', fontSize: '0.85rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.task.title}</h4>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                              <p style={{ color: '#94a3b8', fontSize: '0.72rem', margin: 0 }}>
-                                {new Date(m.uploaded_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
-                              </p>
-                              <span style={{ fontSize: '0.7rem', padding: '2px 6px', borderRadius: 20, background: item.task.status === 'COMPLETED' ? 'rgba(34,197,94,0.15)' : 'rgba(56,189,248,0.1)', color: item.task.status === 'COMPLETED' ? '#22c55e' : '#38bdf8', fontWeight: 600 }}>
-                                {item.task.status}
-                              </span>
+                      item.media.map((m: any) => {
+                        const fileUrl = `http://localhost:8005${m.file_url}`;
+                        const isImage = m.file_type && m.file_type.startsWith('image/');
+                        const isVideo = m.file_type && m.file_type.startsWith('video/');
+                        const taskLand = lands.find((l: any) => l.id === item.task.land_id || l.land_id === item.task.land_id);
+                        return (
+                          <div key={m.id} style={{ background: 'rgba(15,25,35,0.9)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+                            {/* Media preview */}
+                            <div style={{ height: 180, background: '#0b1118', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', position: 'relative' }}>
+                              {isImage ? (
+                                <img
+                                  src={fileUrl}
+                                  alt="Task Proof"
+                                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                />
+                              ) : isVideo ? (
+                                <video controls style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#000' }}>
+                                  <source src={fileUrl} type={m.file_type} />
+                                </video>
+                              ) : (
+                                <a
+                                  href={fileUrl}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  style={{ color: '#38bdf8', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}
+                                >
+                                  <ImageIcon size={40} color="#f97316" />
+                                  <span style={{ fontSize: '0.8rem' }}>📄 View Document</span>
+                                </a>
+                              )}
+                            </div>
+
+                            {/* Card info + Download */}
+                            <div style={{ padding: '0.85rem 1rem', display: 'flex', flexDirection: 'column', gap: 6, flex: 1 }}>
+                              {/* Task name */}
+                              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
+                                <span style={{ fontSize: '0.68rem', fontWeight: 700, color: '#22c55e', background: 'rgba(34,197,94,0.1)', padding: '2px 6px', borderRadius: 6, whiteSpace: 'nowrap', flexShrink: 0 }}>TASK</span>
+                                <h4 style={{ color: '#f1f5f9', margin: 0, fontSize: '0.88rem', fontWeight: 600, lineHeight: 1.3 }}>{item.task.title}</h4>
+                              </div>
+
+                              {/* Project / Land */}
+                              {taskLand && (
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                                  <span style={{ fontSize: '0.68rem', fontWeight: 700, color: '#38bdf8', background: 'rgba(56,189,248,0.1)', padding: '2px 6px', borderRadius: 6, whiteSpace: 'nowrap' }}>PROJECT</span>
+                                  <span style={{ color: '#94a3b8', fontSize: '0.78rem' }}>{taskLand.land_name || taskLand.land_id}</span>
+                                </div>
+                              )}
+
+                              {/* Date + Status + Download */}
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 }}>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                  <span style={{ color: '#64748b', fontSize: '0.72rem' }}>
+                                    {new Date(m.uploaded_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                  </span>
+                                  <span style={{ fontSize: '0.68rem', padding: '2px 6px', borderRadius: 20, background: item.task.status === 'COMPLETED' ? 'rgba(34,197,94,0.15)' : 'rgba(56,189,248,0.1)', color: item.task.status === 'COMPLETED' ? '#22c55e' : '#38bdf8', fontWeight: 600, alignSelf: 'flex-start' }}>
+                                    {item.task.status.replace('_', ' ')}
+                                  </span>
+                                </div>
+
+                                {/* Download button */}
+                                <a
+                                  href={fileUrl}
+                                  download
+                                  style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '0.4rem 0.75rem', borderRadius: 8, background: 'linear-gradient(135deg,#22c55e,#16a34a)', color: '#fff', textDecoration: 'none', fontSize: '0.78rem', fontWeight: 600, flexShrink: 0 }}
+                                >
+                                  ⬇ Download
+                                </a>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))
+                        );
+                      })
                     )}
                   </div>
                 )}
