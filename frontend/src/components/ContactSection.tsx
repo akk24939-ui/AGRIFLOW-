@@ -1,9 +1,17 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Phone, Mail, MapPin, Send } from 'lucide-react';
+import { showToast } from '../admin/components/ToastContainer';
 import './ContactSection.css';
 
 const ContactSection: React.FC = () => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const form = e.target as HTMLFormElement;
+    form.reset();
+    showToast('Your message has been sent successfully!', 'success');
+  };
+
   return (
     <section className="contact-section section-padding" id="contact">
       <div className="container">
@@ -53,18 +61,18 @@ const ContactSection: React.FC = () => {
             className="contact-form-container glass-card"
           >
             <h3>Send us a Message</h3>
-            <form className="contact-form" onSubmit={(e) => e.preventDefault()}>
+            <form className="contact-form" onSubmit={handleSubmit}>
               <div className="form-group">
                 <label>Full Name</label>
-                <input type="text" placeholder="Enter your name" />
+                <input type="text" placeholder="Enter your name" required />
               </div>
               <div className="form-group">
                 <label>Phone Number</label>
-                <input type="tel" placeholder="Enter your phone number" />
+                <input type="tel" placeholder="Enter your phone number" required />
               </div>
               <div className="form-group">
                 <label>Message</label>
-                <textarea placeholder="How can we help you?" rows={4}></textarea>
+                <textarea placeholder="How can we help you?" rows={4} required></textarea>
               </div>
               <button type="submit" className="btn-primary w-100">
                 <Send size={18} /> Submit Details

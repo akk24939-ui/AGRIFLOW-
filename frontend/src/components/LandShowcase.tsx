@@ -34,7 +34,7 @@ const projects = [
 
 const LandShowcase: React.FC = () => {
   return (
-    <section className="showcase-section section-padding">
+    <section className="showcase-section section-padding" id="projects">
       <div className="container">
         <h2 className="section-title">Premium Land Projects</h2>
         

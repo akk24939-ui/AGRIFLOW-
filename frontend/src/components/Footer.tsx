@@ -4,6 +4,13 @@ import { Car, MapPin, CheckCircle, Phone, Mail } from 'lucide-react';
 import './Footer.css';
 
 const Footer: React.FC = () => {
+  const scrollTo = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <footer className="footer-section">
       <div className="visit-cta-container">
@@ -24,7 +31,11 @@ const Footer: React.FC = () => {
                 <li><CheckCircle size={18} className="benefit-icon" /> Guided Land Visit</li>
                 <li><CheckCircle size={18} className="benefit-icon" /> Transparent Process</li>
               </ul>
-              <button className="btn-primary" style={{ marginTop: '20px' }}>
+              <button 
+                className="btn-primary" 
+                style={{ marginTop: '20px' }}
+                onClick={() => scrollTo('contact')}
+              >
                 <Car className="moving-car" size={20} /> Book Free Visit
               </button>
             </div>
@@ -48,10 +59,10 @@ const Footer: React.FC = () => {
           <div className="footer-links">
             <h4>Quick Links</h4>
             <ul>
-              <li><a href="#">About Us</a></li>
-              <li><a href="#">Projects</a></li>
-              <li><a href="#">Features</a></li>
-              <li><a href="#">Contact</a></li>
+              <li><a href="#home" onClick={(e) => { e.preventDefault(); scrollTo('home'); }}>About Us</a></li>
+              <li><a href="#projects" onClick={(e) => { e.preventDefault(); scrollTo('projects'); }}>Projects</a></li>
+              <li><a href="#features" onClick={(e) => { e.preventDefault(); scrollTo('features'); }}>Features</a></li>
+              <li><a href="#contact" onClick={(e) => { e.preventDefault(); scrollTo('contact'); }}>Contact</a></li>
             </ul>
           </div>
           <div className="footer-contact">
