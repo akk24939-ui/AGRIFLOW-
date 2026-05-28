@@ -26,7 +26,8 @@ const ContactSection: React.FC = () => {
           >
             <h3>Contact Information</h3>
             <p className="contact-desc">
-              Reach out to us for any inquiries about our agricultural land projects or farm management system.
+              Reach out to us for any inquiries about our agricultural land projects or farm management system.<br/>
+              <b>For app bugs and errors, please contact:</b>
             </p>
             
             <div className="info-items">
@@ -34,21 +35,21 @@ const ContactSection: React.FC = () => {
                 <div className="info-icon"><Phone size={20} /></div>
                 <div>
                   <h4>Phone</h4>
-                  <p>+91 98765 43210</p>
+                  <p>+91 8148185308</p>
                 </div>
               </div>
               <div className="info-item">
                 <div className="info-icon"><Mail size={20} /></div>
                 <div>
                   <h4>Email</h4>
-                  <p>info@agriflow.com</p>
+                  <p>akk24939@gmail.com</p>
                 </div>
               </div>
               <div className="info-item">
                 <div className="info-icon"><MapPin size={20} /></div>
                 <div>
                   <h4>Office Address</h4>
-                  <p>123 Agri Tower, Tech Park,<br/>Chennai, Tamil Nadu 600001</p>
+                  <p>Panimugil farm developers<br/>Avaniyapuram, Madurai - 625012</p>
                 </div>
               </div>
             </div>

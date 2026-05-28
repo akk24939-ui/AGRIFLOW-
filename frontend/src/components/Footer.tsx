@@ -67,8 +67,8 @@ const Footer: React.FC = () => {
           </div>
           <div className="footer-contact">
             <h4>Contact Us</h4>
-            <p><Phone size={16} /> +91 98765 43210</p>
-            <p><Mail size={16} /> info@agriflow.com</p>
+            <p><Phone size={16} /> +91 8148185308</p>
+            <p><Mail size={16} /> akk24939@gmail.com</p>
           </div>
         </div>
         <div className="footer-copyright">
