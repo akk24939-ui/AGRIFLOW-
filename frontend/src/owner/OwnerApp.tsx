@@ -12,6 +12,7 @@ import CreateTaskModal from '../admin/components/CreateTaskModal';
 import ComplaintsPanel from '../admin/components/ComplaintsPanel';
 import { tasksApi } from '../admin/api';
 import { showToast } from '../admin/components/ToastContainer';
+import '../admin/admin.css';
 
 const MEDIA_BASE = 'http://localhost:8005';
 

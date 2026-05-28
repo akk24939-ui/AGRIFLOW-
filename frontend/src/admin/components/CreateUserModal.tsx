@@ -86,7 +86,7 @@ export default function CreateUserModal({ onClose }: { onClose: () => void }) {
             </div>
             <div className="ag-form-group" style={{ gridColumn: '1 / -1' }}>
               <label className="ag-label">Assigned Lands (Select multiple)</label>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, background: 'var(--bg-glass-subtle)', padding: '10px', borderRadius: 8, border: '1px solid var(--border-glass)', maxHeight: 150, overflowY: 'auto' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, background: 'var(--bg-elevated)', padding: '10px', borderRadius: 8, border: '1px solid var(--glass-border)', maxHeight: 150, overflowY: 'auto' }}>
                 {availableLands.map(l => (
                   <label key={l.id} style={{ display: 'flex', alignItems: 'center', gap: 6, background: selectedLands.includes(l.land_id) ? 'rgba(56,189,248,0.15)' : 'rgba(255,255,255,0.05)', color: selectedLands.includes(l.land_id) ? '#38bdf8' : '#cbd5e1', padding: '4px 10px', borderRadius: 20, fontSize: '0.8rem', cursor: 'pointer', border: `1px solid ${selectedLands.includes(l.land_id) ? 'rgba(56,189,248,0.3)' : 'transparent'}` }}>
                     <input 

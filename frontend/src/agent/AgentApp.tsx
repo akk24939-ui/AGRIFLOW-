@@ -4,6 +4,7 @@ import { useAdminStore } from '../admin/store/adminStore';
 import { LogOut, Clock, AlertCircle, ClipboardList, Moon, Sun } from 'lucide-react';
 import AgentTaskDetails from './AgentTaskDetails';
 import ComplaintsPanel from '../admin/components/ComplaintsPanel';
+import '../admin/admin.css';
 import './agent.css';
 
 export default function AgentApp() {
