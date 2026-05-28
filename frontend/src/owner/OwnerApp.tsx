@@ -3,7 +3,7 @@ import { Routes, Route, Navigate, useNavigate, useLocation, Link } from 'react-r
 import {
   LayoutDashboard, MapPin, Users, ClipboardList, LogOut,
   Menu, X, Leaf, RefreshCw, Plus, Edit, MessageCircle,
-  Image as ImageIcon, Video, FileText, Download, Upload
+  Image as ImageIcon, Video, FileText, Download, Upload, Trash2
 } from 'lucide-react';
 import { useAdminStore } from '../admin/store/adminStore';
 import CreateUserModal from '../admin/components/CreateUserModal';
@@ -91,11 +91,12 @@ function OwnerTaskMedia({ taskId }: { taskId: string }) {
             const isVid = m.file_type?.startsWith('video');
             const url = `${MEDIA_BASE}${m.file_url}`;
             return (
-              <div key={m.id} onClick={()=>setLb({url, fileType:m.file_type})} style={{ background:'#1e293b', borderRadius:8, overflow:'hidden', cursor:'pointer', border:'1px solid rgba(255,255,255,0.06)', transition:'transform 0.15s' }}
+              <div key={m.id} style={{ background:'#1e293b', borderRadius:8, overflow:'hidden', border:'1px solid rgba(255,255,255,0.06)', transition:'transform 0.15s' }}
                 onMouseEnter={e=>(e.currentTarget.style.transform='scale(1.04)')}
                 onMouseLeave={e=>(e.currentTarget.style.transform='scale(1)')}
               >
-                <div style={{ height:80, background:'#0f172a', display:'flex', alignItems:'center', justifyContent:'center', overflow:'hidden' }}>
+                {/* Preview — click to lightbox */}
+                <div onClick={()=>setLb({url, fileType:m.file_type})} style={{ height:80, background:'#0f172a', display:'flex', alignItems:'center', justifyContent:'center', overflow:'hidden', cursor:'pointer' }}>
                   {isImg ? (
                     <img src={url} style={{ width:'100%', height:'100%', objectFit:'cover' }} alt="Proof" onError={e=>{(e.target as any).style.display='none';}}/>
                   ) : isVid ? (
@@ -104,8 +105,15 @@ function OwnerTaskMedia({ taskId }: { taskId: string }) {
                     <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:3 }}><FileText size={26} color="#f97316"/><span style={{ fontSize:'0.6rem', color:'#64748b' }}>Doc</span></div>
                   )}
                 </div>
-                <div style={{ padding:'4px 6px', fontSize:'0.62rem', color:'#94a3b8' }}>
-                  {new Date(m.uploaded_at).toLocaleDateString('en-IN', {day:'numeric', month:'short'})}
+                {/* Footer: date + download */}
+                <div style={{ padding:'4px 6px', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                  <span style={{ fontSize:'0.62rem', color:'#94a3b8' }}>
+                    {new Date(m.uploaded_at).toLocaleDateString('en-IN', {day:'numeric', month:'short'})}
+                  </span>
+                  <a href={url} download onClick={e=>e.stopPropagation()} title="Download"
+                    style={{ color:'#22c55e', display:'flex', alignItems:'center', padding:'2px' }}>
+                    <Download size={13}/>
+                  </a>
                 </div>
               </div>
             );
@@ -459,17 +467,31 @@ function OwnerTasksPage() {
   const { users, tasks, fetchTasks, fetchLands, fetchUsers, loading } = useAdminStore();
   const [showCreate, setShowCreate] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState<string | null>(null);
 
   useEffect(() => { fetchTasks(); fetchLands(); fetchUsers(); }, []);
 
   const statusColor = (s: string) => s === 'COMPLETED' ? '#22c55e' : s === 'IN_PROGRESS' ? '#38bdf8' : '#fbbf24';
+
+  const deleteTask = async (taskId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!window.confirm('Delete this task? This cannot be undone.')) return;
+    setDeleting(taskId);
+    try {
+      await tasksApi.delete(taskId);
+      showToast('Task deleted successfully', 'success');
+      fetchTasks();
+    } catch (err: any) {
+      showToast(err.message || 'Failed to delete task', 'error');
+    } finally { setDeleting(null); }
+  };
 
   return (
     <div style={{ padding: '1.5rem', fontFamily: 'Inter,sans-serif' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
         <div>
           <h1 style={{ color: '#f1f5f9', fontSize: '1.4rem', fontWeight: 700, margin: 0 }}>My Tasks</h1>
-          <p style={{ color: '#64748b', fontSize: '0.85rem', marginTop: 4 }}>{tasks.length} tasks — click any task to view attachments</p>
+          <p style={{ color: '#64748b', fontSize: '0.85rem', marginTop: 4 }}>{tasks.length} tasks — click any task to view & download attachments</p>
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
           <button onClick={() => { fetchTasks(); fetchLands(); }} style={{ padding: '0.5rem 1rem', borderRadius: 8, border: 'none', cursor: 'pointer', background: '#1e293b', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.85rem' }}>
@@ -489,8 +511,8 @@ function OwnerTasksPage() {
           const isOpen = expanded === t.id;
           return (
           <div key={t.id} style={{ background: 'rgba(15,25,35,0.9)', border: isOpen ? '1px solid rgba(56,189,248,0.3)' : '1px solid rgba(255,255,255,0.06)', borderRadius: 12, overflow: 'hidden' }}>
-            <div onClick={() => setExpanded(isOpen ? null : t.id)} style={{ padding: '1rem 1.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', cursor: 'pointer' }}>
-              <div>
+            <div style={{ padding: '1rem 1.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div style={{ flex: 1, cursor: 'pointer' }} onClick={() => setExpanded(isOpen ? null : t.id)}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
                   <div style={{ color: '#f1f5f9', fontWeight: 600 }}>{t.title}</div>
                   {t.priority && t.priority !== 'MEDIUM' ? <span style={{ background: 'rgba(248,113,113,0.15)', color: '#f87171', fontSize: '0.65rem', padding: '2px 6px', borderRadius: 10 }}>{t.priority}</span> : null}
@@ -501,10 +523,20 @@ function OwnerTasksPage() {
                   <span style={{ color: '#a7f3d0', fontSize: '0.78rem' }}>Agent: {assignedAgent?.full_name || 'Unassigned'}</span>
                 </div>
               </div>
-              <div style={{ textAlign: 'right', flexShrink: 0 }}>
+              <div style={{ textAlign: 'right', flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
                 <span style={{ color: statusColor(t.status), background: `rgba(${statusColor(t.status) === '#22c55e' ? '34,197,94' : statusColor(t.status) === '#38bdf8' ? '56,189,248' : '251,191,36'},0.1)`, padding: '3px 10px', borderRadius: 20, fontSize: '0.72rem', fontWeight: 600 }}>{t.status}</span>
-                {t.deadline && <div style={{ color: '#64748b', fontSize: '0.75rem', marginTop: 6 }}>Due: {new Date(t.deadline).toLocaleDateString()}</div>}
-                <div style={{ color: '#475569', fontSize: '0.7rem', marginTop: 4 }}>🖼 Click to view attachments</div>
+                {t.deadline && <div style={{ color: '#64748b', fontSize: '0.75rem' }}>Due: {new Date(t.deadline).toLocaleDateString()}</div>}
+                <div style={{ display: 'flex', gap: 6 }}>
+                  <div style={{ color: '#475569', fontSize: '0.7rem', alignSelf: 'center', cursor: 'pointer' }} onClick={() => setExpanded(isOpen ? null : t.id)}>🖼 View attachments</div>
+                  <button
+                    onClick={(e) => deleteTask(t.id, e)}
+                    disabled={deleting === t.id}
+                    style={{ padding: '5px 8px', borderRadius: 6, border: 'none', cursor: 'pointer', background: 'rgba(239,68,68,0.12)', color: '#f87171', display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.75rem', fontWeight: 600 }}
+                    title="Delete Task"
+                  >
+                    <Trash2 size={13} /> {deleting === t.id ? '...' : 'Delete'}
+                  </button>
+                </div>
               </div>
             </div>
             {isOpen && (
