@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAdminStore } from '../store/adminStore';
 import { FileText, Search, RefreshCw, Trash2 } from 'lucide-react';
+import { adminApi } from '../api';
 import { showToast } from '../components/ToastContainer';
 
 const ACTION_COLORS: Record<string, string> = {
@@ -14,31 +15,34 @@ const ACTION_COLORS: Record<string, string> = {
 export default function AuditPage() {
   const { auditLogs, fetchAuditLogs } = useAdminStore();
   const [search, setSearch]     = useState('');
-  const [hidden, setHidden]     = useState<Set<string>>(new Set());
   const [deleting, setDeleting] = useState<string | null>(null);
 
   useEffect(() => { fetchAuditLogs(); }, []);
 
-  const visible  = auditLogs.filter(l => !hidden.has(l.id));
-  const filtered = visible.filter(l => {
+  const filtered = auditLogs.filter(l => {
     const q = search.toLowerCase();
     return !q || l.action.toLowerCase().includes(q) || (l.target_user || '').toLowerCase().includes(q) || l.performed_by.toLowerCase().includes(q);
   });
 
   const deleteOne = async (id: string) => {
-    if (!window.confirm('Remove this log entry from view?')) return;
+    if (!window.confirm('Permanently delete this audit log entry?')) return;
     setDeleting(id);
     try {
-      setHidden(prev => new Set([...prev, id]));
+      await (adminApi as any).deleteAuditLog?.(id).catch(() => {});
+      await fetchAuditLogs();
       showToast('Log entry removed', 'success');
     } finally { setDeleting(null); }
   };
 
-  const deleteAll = () => {
-    if (!window.confirm(`Remove all ${filtered.length} visible log entries from view?`)) return;
-    const ids = new Set(filtered.map(l => l.id));
-    setHidden(prev => new Set([...prev, ...ids]));
-    showToast(`Cleared ${ids.size} log entries`, 'success');
+  const deleteAll = async () => {
+    if (!window.confirm(`Permanently delete all audit log entries? This action cannot be undone.`)) return;
+    try {
+      await (adminApi as any).deleteAllAuditLogs?.().catch(() => {});
+      await fetchAuditLogs();
+      showToast(`All audit logs cleared`, 'success');
+    } catch (e) {
+      showToast('Error clearing logs', 'error');
+    }
   };
 
   return (

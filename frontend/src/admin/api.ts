@@ -129,6 +129,8 @@ export const adminApi = {
   dashboard:  () => apiFetch('/api/admin/dashboard'),
   loginLogs:  (params = '') => apiFetch(`/api/admin/login-logs${params ? '?' + params : ''}`),
   auditLogs:  (params = '') => apiFetch(`/api/admin/audit-logs${params ? '?' + params : ''}`),
+  deleteAuditLog: (id: string) => apiFetch(`/api/admin/audit-logs/${id}`, { method: 'DELETE' }),
+  deleteAllAuditLogs: () => apiFetch(`/api/admin/audit-logs`, { method: 'DELETE' }),
 };
 
 export const complaintsApi = {
