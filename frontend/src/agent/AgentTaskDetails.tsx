@@ -75,10 +75,10 @@ export default function AgentTaskDetails({ task, onBack }: Props) {
         {/* Task Info Card */}
         <div className="mobile-task-card" style={{ marginBottom: '1.5rem' }}>
           <div className="task-head">
-            <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>LAND ID : {task.land_id || 'N/A'}</span>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>LAND ID : {task.land_id || 'N/A'}</span>
             <span className={`task-badge ${task.status.toLowerCase()}`}>{task.status.replace('_', ' ')}</span>
           </div>
-          <h2 style={{ fontSize: '1.25rem', margin: '0.5rem 0', color: '#f1f5f9' }}>{task.title}</h2>
+          <h2 style={{ fontSize: '1.25rem', margin: '0.5rem 0', color: ('var(--text-primary)') }}>{task.title}</h2>
           {task.deadline && (
             <div style={{ color: '#ef4444', fontSize: '0.85rem', fontWeight: 600, marginBottom: '1rem' }}>
               Deadline: {new Date(task.deadline).toLocaleDateString()}
@@ -97,13 +97,13 @@ export default function AgentTaskDetails({ task, onBack }: Props) {
             <h4 className="section-title">Previous Uploads</h4>
             <div className="media-gallery" style={{ display: 'flex', gap: '10px', overflowX: 'auto', paddingBottom: '10px' }}>
               {mediaList.map((m: any) => (
-                <div key={m.id} style={{ minWidth: '100px', height: '100px', background: '#1e293b', borderRadius: '8px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(255,255,255,0.1)' }}>
+                <div key={m.id} style={{ minWidth: '100px', height: '100px', background: 'var(--bg-card)', borderRadius: '8px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(255,255,255,0.1)' }}>
                   {m.file_type.startsWith('image/') ? (
                     <img src={`http://localhost:8000${m.file_url}`} alt="proof" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   ) : m.file_type.startsWith('video/') ? (
                     <video src={`http://localhost:8000${m.file_url}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   ) : (
-                    <FileImage size={32} color="#64748b" />
+                    <FileImage size={32} color='var(--text-muted)' />
                   )}
                 </div>
               ))}
