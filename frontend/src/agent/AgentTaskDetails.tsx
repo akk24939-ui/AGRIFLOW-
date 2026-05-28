@@ -5,6 +5,8 @@ import { tasksApi } from '../admin/api';
 import { showToast } from '../admin/components/ToastContainer';
 import './agent.css';
 
+const MEDIA_BASE = 'http://localhost:8005';
+
 interface Props {
   task: Task;
   onBack: () => void;
@@ -99,9 +101,9 @@ export default function AgentTaskDetails({ task, onBack }: Props) {
               {mediaList.map((m: any) => (
                 <div key={m.id} style={{ minWidth: '100px', height: '100px', background: 'var(--bg-card)', borderRadius: '8px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(255,255,255,0.1)' }}>
                   {m.file_type.startsWith('image/') ? (
-                    <img src={`http://localhost:8000${m.file_url}`} alt="proof" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img src={`${MEDIA_BASE}${m.file_url}`} alt="proof" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   ) : m.file_type.startsWith('video/') ? (
-                    <video src={`http://localhost:8000${m.file_url}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <video src={`${MEDIA_BASE}${m.file_url}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   ) : (
                     <FileImage size={32} color='var(--text-muted)' />
                   )}
